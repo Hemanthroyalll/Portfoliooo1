@@ -1,0 +1,167 @@
+---
+---
+<div class="hex-background" id="hexBackground"></div>
+
+<script>
+  class HexBackground {
+    constructor() {
+      this.canvas = document.createElement('canvas');
+      this.ctx = this.canvas.getContext('2d');
+      this.container = document.getElementById('hexBackground');
+      this.mouseSpeed = { x: 0, y: 0, timestamp: 0 };
+      this.lastMousePosition = { x: 0, y: 0 };
+      this.globalBrightness = 0.1;
+      this.targetBrightness = 0.1;
+      
+      this.init();
+    }
+
+    init() {
+      this.container.appendChild(this.canvas);
+      this.resize();
+      this.createHexagons();
+      this.bindEvents();
+      this.animate();
+    }
+
+    resize() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
+
+    createHexagons() {
+      const size = 120;
+      const h = size * Math.sqrt(3);
+      const cols = Math.ceil(window.innerWidth / (size * 1.5)) + 1;
+      const rows = Math.ceil(window.innerHeight / h) + 1;
+
+      this.hexagons = [];
+      
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = col * size * 1.5;
+          const y = row * h + (col % 2) * h/2;
+          this.hexagons.push({ 
+            x, 
+            y, 
+            size,
+            brightness: 0.1,
+            targetBrightness: 0.1 
+          });
+        }
+      }
+    }
+
+    drawHexagon(x, y, size, brightness) {
+      const ctx = this.ctx;
+      
+      // Main hexagon
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const angle = i * Math.PI / 3;
+        const xPos = x + size * Math.cos(angle);
+        const yPos = y + size * Math.sin(angle);
+        if (i === 0) ctx.moveTo(xPos, yPos);
+        else ctx.lineTo(xPos, yPos);
+      }
+      ctx.closePath();
+
+      // Neon glow effect
+      const gradient = ctx.createLinearGradient(
+        x - size, y - size,
+        x + size, y + size
+      );
+      gradient.addColorStop(0, `rgba(64, 156, 255, ${brightness * 0.5})`);
+      gradient.addColorStop(1, `rgba(0, 234, 255, ${brightness * 0.5})`);
+
+      // Outer glow
+      ctx.shadowColor = `rgba(64, 156, 255, ${brightness})`;
+      ctx.shadowBlur = 15;
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Inner glow
+      ctx.shadowBlur = 8;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${brightness * 0.8})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    bindEvents() {
+      window.addEventListener('resize', () => {
+        this.resize();
+        this.createHexagons();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        const currentTime = Date.now();
+        const dt = currentTime - this.mouseSpeed.timestamp;
+        
+        if (dt > 0) {
+          this.mouseSpeed.x = (e.clientX - this.lastMousePosition.x) / dt;
+          this.mouseSpeed.y = (e.clientY - this.lastMousePosition.y) / dt;
+          this.mouseSpeed.timestamp = currentTime;
+
+          const speed = Math.sqrt(
+            this.mouseSpeed.x * this.mouseSpeed.x + 
+            this.mouseSpeed.y * this.mouseSpeed.y
+          );
+          
+          this.targetBrightness = Math.min(1, 0.1 + speed / 3);
+        }
+        
+        this.lastMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mouseleave', () => {
+        this.targetBrightness = 0.1;
+      });
+    }
+
+    animate() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      
+      this.globalBrightness += (this.targetBrightness - this.globalBrightness) * 0.1;
+      
+      this.hexagons.forEach(hex => {
+        const distance = Math.sqrt(
+          Math.pow(this.lastMousePosition.x - hex.x, 2) + 
+          Math.pow(this.lastMousePosition.y - hex.y, 2)
+        );
+        
+        const maxDistance = 500;
+        const localBrightness = Math.max(
+          this.globalBrightness,
+          Math.min(1, (1 - distance/maxDistance) * this.globalBrightness * 2.5)
+        );
+        
+        hex.brightness += (localBrightness - hex.brightness) * 0.1;
+        
+        this.drawHexagon(hex.x, hex.y, hex.size, hex.brightness);
+      });
+      
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new HexBackground();
+  });
+</script>
+
+<style>
+  .hex-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: #0a0f1c;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>

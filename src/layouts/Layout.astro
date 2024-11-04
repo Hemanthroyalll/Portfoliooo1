@@ -1,0 +1,76 @@
+---
+import Navigation from '../components/Navigation.astro';
+import HexBackground from '../components/HexBackground.astro';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Personal Portfolio Website" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <HexBackground />
+    <Navigation />
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --accent: #409cff;
+    --accent-light: #68b1ff;
+    --accent-dark: #1a4d80;
+    --card-bg: rgba(20, 30, 48, 0.85);
+    --card-border: rgba(64, 156, 255, 0.1);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: system-ui, sans-serif;
+    background: #0a0f1c;
+    color: #fff;
+  }
+
+  main {
+    margin: 0 auto;
+    padding: 6rem 2rem 2rem;
+    max-width: 1200px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    line-height: 1.6;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+</style>

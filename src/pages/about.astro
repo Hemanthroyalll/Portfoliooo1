@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Portfolio | About">
+  <div class="about">
+    <h1>About Me</h1>
+    <div class="content">
+      <div class="bio card">
+        <p>
+          Hello! I'm a passionate full-stack developer with a keen interest in creating
+          beautiful and functional web applications. With several years of experience
+          in the industry, I've worked on various projects ranging from small business
+          websites to large-scale enterprise applications.
+        </p>
+        <p>
+          My expertise includes:
+        </p>
+        <ul>
+          <li>Frontend Development (React, Vue, Angular)</li>
+          <li>Backend Development (Node.js, Python, Java)</li>
+          <li>Database Design (SQL, NoSQL)</li>
+          <li>UI/UX Design</li>
+          <li>Cloud Services (AWS, Azure)</li>
+        </ul>
+      </div>
+      <div class="skills card">
+        <h2>Technical Skills</h2>
+        <div class="skill-grid">
+          {['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'SQL'].map((skill) => (
+            <div class="skill-item">{skill}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .about {
+    padding: 2rem 0;
+  }
+
+  .content {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .bio {
+    padding: 2rem;
+  }
+
+  .bio p {
+    margin-bottom: 1.5rem;
+  }
+
+  .bio ul {
+    list-style-position: inside;
+    margin-left: 1rem;
+  }
+
+  .bio li {
+    margin-bottom: 0.5rem;
+  }
+
+  .skills {
+    padding: 2rem;
+  }
+
+  .skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .skill-item {
+    background: rgba(64, 156, 255, 0.15);
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(64, 156, 255, 0.2);
+  }
+
+  .skill-item:hover {
+    background: rgba(64, 156, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+</style>
